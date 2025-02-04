@@ -15,13 +15,11 @@ export class HltbSearch {
   private searchKey: string;
 
   private static readonly SEARCH_KEY_PATTERN =
-    /"\/api\/search\/".concat\("([a-zA-Z0-9]+)"\)/g;
+    /"\/api\/s\/".concat\("([a-zA-Z0-9]+)"\).concat\("([a-zA-Z0-9]+)"\)/g;
 
   payload: any = {
     "searchType": "games",
-    "searchTerms": [
-
-    ],
+    "searchTerms": [""],
     "searchPage": 1,
     "size": 20,
     "searchOptions": {
@@ -37,11 +35,12 @@ export class HltbSearch {
         "gameplay": {
           "perspective": "",
           "flow": "",
-          "genre": ""
+          "genre": "",
+          "difficulty": ""
         },
         "rangeYear": {
-          "min": null,
-          "max": null
+          "min": "",
+          "max": ""
         },
         "modifier": ""
       },
@@ -84,7 +83,6 @@ export class HltbSearch {
 
   async search(query: Array<string>, signal?: AbortSignal): Promise<any> {
     // Use built-in javascript URLSearchParams as a drop-in replacement to create axios.post required data param
-    // Use built-in javascript URLSearchParams as a drop-in replacement to create axios.post required data param
     let search = { ...this.payload };
     search.searchTerms = query;
     try {
@@ -97,14 +95,14 @@ export class HltbSearch {
       let result = await axios.post(searchUrlWithKey, search, {
         headers: {
           "User-Agent": new UserAgent().toString(),
-          "content-type": "application/json",
-          origin: "https://howlongtobeat.com/",
-          referer: "https://howlongtobeat.com/",
+          'Accept': '*/*',
+          "Content-Type": "application/json",
+          "Origin": "https://howlongtobeat.com",
+          "Referer": `https://howlongtobeat.com/`,
         },
         timeout: 20000,
         signal,
       });
-      // console.log('Result', JSON.stringify(result.data));
       return result.data;
     } catch (error) {
       if (error) {
@@ -118,7 +116,7 @@ export class HltbSearch {
     }
   }
 
-  private async getSearchKey(checkAllScripts: boolean = false): Promise<string> {
+  private async getSearchKey(): Promise<string> {
     const res = await axios.get(HltbSearch.BASE_URL, {
       headers: {
         "User-Agent": new UserAgent().toString(),
@@ -135,7 +133,7 @@ export class HltbSearch {
     for (const el of scripts) {
       const src = $(el).attr("src") as string;
 
-      if (!checkAllScripts && !src.includes("_app-")) {
+      if (!src.includes("_app-")) {
         continue;
       }
 
@@ -152,7 +150,9 @@ export class HltbSearch {
 
         const scriptText = res.data;
         const matches = [...scriptText.matchAll(HltbSearch.SEARCH_KEY_PATTERN)];
-        return matches[0][1];
+        const firstKey: string = matches[0][1]
+        const secondKey: string = matches[0][2]
+        return firstKey.concat(secondKey)
       } catch (error) {
         continue;
       }
