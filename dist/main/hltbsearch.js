@@ -94,6 +94,7 @@ class HltbSearch {
                     this.searchKey = yield this.getSearchKey();
                 }
                 const searchUrlWithKey = HltbSearch.SEARCH_URL + this.searchKey;
+                console.log(searchUrlWithKey);
                 let result = yield axios.post(searchUrlWithKey, search, {
                     headers: {
                         "User-Agent": new UserAgent().toString(),
@@ -161,8 +162,8 @@ class HltbSearch {
 }
 HltbSearch.BASE_URL = 'https://howlongtobeat.com/';
 HltbSearch.DETAIL_URL = `${HltbSearch.BASE_URL}game?id=`;
-HltbSearch.SEARCH_URL = `${HltbSearch.BASE_URL}api/s/`;
+HltbSearch.SEARCH_URL = `${HltbSearch.BASE_URL}api/ouch/`;
 HltbSearch.IMAGE_URL = `${HltbSearch.BASE_URL}games/`;
-HltbSearch.SEARCH_KEY_PATTERN = /"\/api\/s\/".concat\("([a-zA-Z0-9]+)"\).concat\("([a-zA-Z0-9]+)"\)/g;
+HltbSearch.SEARCH_KEY_PATTERN = /"\/api\/ouch\/".concat\("([a-zA-Z0-9]+)"\).concat\("([a-zA-Z0-9]+)"\)/g;
 exports.HltbSearch = HltbSearch;
 //# sourceMappingURL=hltbsearch.js.map
