@@ -1,3 +1,5 @@
+import { first } from "cheerio/dist/commonjs/api/traversing";
+
 const axios: any = require('axios');
 const UserAgent: any = require('user-agents');
 const cheerio: any = require('cheerio')
@@ -9,13 +11,13 @@ const cheerio: any = require('cheerio')
 export class HltbSearch {
   public static BASE_URL: string = 'https://howlongtobeat.com/';
   public static DETAIL_URL: string = `${HltbSearch.BASE_URL}game?id=`;
-  public static SEARCH_URL: string = `${HltbSearch.BASE_URL}api/ouch/`;
+  public static SEARCH_URL: string = `${HltbSearch.BASE_URL}api/seek/`;
   public static IMAGE_URL: string = `${HltbSearch.BASE_URL}games/`;
 
   private searchKey: string;
 
   private static readonly SEARCH_KEY_PATTERN =
-    /"\/api\/ouch\/".concat\("([a-zA-Z0-9]+)"\).concat\("([a-zA-Z0-9]+)"\)/g;
+    /"\/api\/seek\/".concat\("([a-zA-Z0-9]+)"\).concat\("([a-zA-Z0-9]+)"\)/g;
 
   payload: any = {
     "searchType": "games",
@@ -124,11 +126,11 @@ export class HltbSearch {
         referer: "https://howlongtobeat.com",
       },
     });
-
     const html = res.data;
     const $ = cheerio.load(html);
 
     const scripts = $("script[src]");
+
 
     for (const el of scripts) {
       const src = $(el).attr("src") as string;
